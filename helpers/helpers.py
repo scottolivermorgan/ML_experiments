@@ -31,3 +31,44 @@ def get_stock_price(
     except Exception as e:
         print(f"Failed to retrive data for {ticker} with exception {e}")
         return pd.DataFrame()
+
+
+def rename_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Renames all columns in the DataFrame to uppercase and replaces spaces with underscores.
+
+    Parameters:
+    df (pd.DataFrame): The input DataFrame.
+
+    Returns:
+    pd.DataFrame: The DataFrame with renamed columns.
+    """
+    df.columns = df.columns.str.upper().str.replace(' ', '_')
+    return df
+
+
+def clean_stock_data(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Cleans and processes the stock data DataFrame.
+
+    Parameters:
+    df (pd.DataFrame): The input DataFrame containing stock price data.
+
+    Returns:
+    pd.DataFrame: The cleaned and processed DataFrame.
+    """
+    # Ensure the index is of datetime type
+    df.index = pd.to_datetime(df.index)
+
+    # Ensure the expected columns are all floats
+    expected_float_columns = ['OPEN', 'HIGH', 'LOW', 'CLOSE', 'ADJ_CLOSE', 'VOLUME']
+    df[expected_float_columns] = df[expected_float_columns].astype(float)
+
+    # Order the DataFrame by index from oldest to newest
+    df = df.sort_index(ascending=True)
+
+    # Forward fill followed by backward fill to handle NaN values
+    df = df.ffill().bfill()
+
+    return df
+
