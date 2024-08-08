@@ -20,9 +20,14 @@ def get_stock_price(
     Returns:
     pd.DataFrame: A DataFrame containing the stock price data.
     """
+    try:
+        if start is None:
+            df = yf.download(ticker, period="max", interval=interval)
 
-    if start is None:
-        return yf.download(ticker, period="max", interval=interval)
+        else:
+            df = yf.download(ticker, start=start, end=end, interval=interval)
+        return df
 
-    else:
-        return yf.download(ticker, start=start, end=end, interval=interval)
+    except Exception as e:
+        print(f"Failed to retrive data for {ticker} with exception {e}")
+        return pd.DataFrame()
