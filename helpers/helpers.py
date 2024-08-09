@@ -1,5 +1,7 @@
 import yfinance as yf
 import pandas as pd
+import os
+from pathlib import Path
 
 
 def get_stock_price(
@@ -72,3 +74,35 @@ def clean_stock_data(df: pd.DataFrame) -> pd.DataFrame:
 
     return df
 
+
+def create_output_folders():
+    # Define the folder paths
+    folders = ['outputs/data', 'outputs/plots']
+
+    for folder in folders:
+        # Use pathlib to create the Path object
+        path = Path(folder)
+
+        # Check if the folder exists
+        if not path.exists():
+            # If not, create the folder
+            path.mkdir(parents=True, exist_ok=True)
+            print(f"Folder '{folder}' created.")
+        else:
+            print(f"Folder '{folder}' already exists.")
+
+
+def load_and_prepare_csv(file_path):
+    # Load the CSV file into a DataFrame
+    df = pd.read_csv(file_path)
+    
+    # Convert the 'Date' column to datetime
+    df['Date'] = pd.to_datetime(df['Date'])
+    
+    # Set the 'Date' column as the index
+    df.set_index('Date', inplace=True)
+    
+    # Convert all other columns to float
+    df = df.astype(float)
+    
+    return df
