@@ -101,6 +101,9 @@ def load_and_prepare_csv(file_path):
     
     # Set the 'Date' column as the index
     df.set_index('Date', inplace=True)
+
+    # Sort the DataFrame by the Date index
+    df.sort_index(inplace=True)
     
     # Convert all other columns to float
     df = df.astype(float)
